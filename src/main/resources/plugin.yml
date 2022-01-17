@@ -5,3 +5,7 @@ api-version: 1.16
 authors: [ Mbarrr ]
 description: Simple plugin for handling permission groups interacting with blocks
 website: github.com/Mbarrr
+commands:
+  ChangeEventPermission:
+    description: Add or remove a permission group from an event
+    usage: /ChangeEventPermission <Event> <Permission Group> <True/False>
