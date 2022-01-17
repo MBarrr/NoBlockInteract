@@ -1,0 +1,7 @@
+name: NoBlockInteract
+version: '${project.version}'
+main: github.mbarrr.noblockinteract.NoBlockInteract
+api-version: 1.16
+authors: [ Mbarrr ]
+description: Simple plugin for handling permission groups interacting with blocks
+website: github.com/Mbarrr
