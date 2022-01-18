@@ -15,16 +15,18 @@ public class ChangePermissionCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
         if(!(sender instanceof Player)) return false;
+        Player player = (Player) sender;
+
         if(!sender.isOp()){
-            sender.sendMessage("You do not have permission to do this.");
+            NoBlockInteract.getInstance().sendPlayerMessage(player,"You do not have permission to do this.");
             return false;
         }
         if(args.length != 3) {
-            sender.sendMessage("Please enter 3 arguments");
+            NoBlockInteract.getInstance().sendPlayerMessage(player,"Please enter 3 arguments");
             return false;
         }
         if(!NoBlockInteract.getInstance().getConfig().contains("events."+args[0])) {
-            sender.sendMessage("Event not found: "+args[0]);
+            NoBlockInteract.getInstance().sendPlayerMessage(player,"Event not found: "+args[0]);
             return false;
         }
 
@@ -38,24 +40,25 @@ public class ChangePermissionCommand implements CommandExecutor {
         //Permission is to be added
         if(value && !containsPerm){
             perms.add(permission);
-            sender.sendMessage("Permission successfully added.");
+            NoBlockInteract.getInstance().sendPlayerMessage(player,"Permission successfully added.");
         }
 
         //Permission is to be removed
         else{
             if(!containsPerm) {
-                sender.sendMessage("Permission was not found.");
+                NoBlockInteract.getInstance().sendPlayerMessage(player,"Permission was not found.");
                 return false;
             }
 
             else{
                 perms.remove(permission);
-                sender.sendMessage("Permission successfully removed.");
+                NoBlockInteract.getInstance().sendPlayerMessage(player,"Permission successfully removed.");
             }
         }
 
         NoBlockInteract.getInstance().getConfig().set("events."+event, perms);
         NoBlockInteract.getInstance().saveConfig();
+        NoBlockInteract.getInstance().loadPermissions();
         return true;
     }
 }
