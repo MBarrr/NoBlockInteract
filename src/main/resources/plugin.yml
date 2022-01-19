@@ -8,7 +8,7 @@ website: github.com/Mbarrr
 commands:
   ChangeEventPermission:
     description: Add or remove a permission group from an event
-    usage: §eUsage; /ChangeEventPermission <event> <permission group> <true/false>
+    usage: §eUsage; /ChangeEventPermission <BlockBreakEvent/BlockPlaceEvent> <permission group> <true/false>
   AddEvent:
     description: Add an event
     usage: §eUsage; /AddEvent <event>

@@ -1,5 +1,6 @@
-package github.mbarrr.noblockinteract;
+package github.mbarrr.noblockinteract.Commands;
 
+import github.mbarrr.noblockinteract.NoBlockInteract;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -65,8 +66,6 @@ public class ChangePermissionCommand implements CommandExecutor {
             NoBlockInteract.getInstance().sendPlayerMessage(player,"Permission successfully removed.");
         }
 
-        NoBlockInteract.getInstance().writeEventsToConfig();
-        NoBlockInteract.getInstance().loadPermissions();
         return true;
     }
 }

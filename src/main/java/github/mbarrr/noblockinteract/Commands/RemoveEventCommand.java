@@ -1,5 +1,6 @@
-package github.mbarrr.noblockinteract;
+package github.mbarrr.noblockinteract.Commands;
 
+import github.mbarrr.noblockinteract.NoBlockInteract;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,7 +36,10 @@ public class RemoveEventCommand implements CommandExecutor {
             return true;
         }
 
-        NoBlockInteract.getInstance().removeEvent(event);
+        //REMOVE EVENT HERE
+        ////
+        ////
+        ///
         NoBlockInteract.getInstance().sendPlayerMessage(player,"Event has been removed.");
 
         return true;
