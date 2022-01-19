@@ -17,9 +17,11 @@ public class ChangePermissionCommand implements CommandExecutor {
         Player player = (Player) sender;
 
         if(!sender.isOp()){
-            NoBlockInteract.getInstance().sendPlayerMessage(player,"You do not have permission to do this.");
+            NoBlockInteract.getInstance().sendNoPermissionMessage(player);
             return true;
         }
+
+        if(args.length == 0) return false;
 
         if(args[0].equalsIgnoreCase("help")){
             return false;

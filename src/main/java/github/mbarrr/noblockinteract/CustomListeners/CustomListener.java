@@ -5,9 +5,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class CustomListener implements Listener {
+public class CustomListener implements Listener{
     
     private final FileConfiguration conf;
     private final String eventName;
@@ -17,7 +18,6 @@ public class CustomListener implements Listener {
     public CustomListener(String eventName){
         this.eventName = eventName;
         this.conf = NoBlockInteract.getInstance().getConfig();
-        NoBlockInteract.getInstance().registerEvent(this);
         loadPermissions();
     }
 
@@ -25,10 +25,9 @@ public class CustomListener implements Listener {
         permissions = conf.getStringList("events."+eventName+".permissions");
         allowEventByDefault = conf.getBoolean("events."+eventName+".allowEventByDefault");
     }
-    
-    
+
     protected boolean calculatePermission(Player player){
-        if(permissions.isEmpty()) return !allowEventByDefault;
+        if(allowEventByDefault) return false;
         
         for (String perm : permissions) {
             if (player.hasPermission(perm)) return false;
@@ -59,6 +58,20 @@ public class CustomListener implements Listener {
     public void addPermission(String permission){
         permissions.add(permission);
         writePermissionsToConfig();
+    }
+
+    public List<String> getPermissions(){
+        return permissions;
+    }
+
+    public boolean getDefault(){
+        return allowEventByDefault;
+    }
+
+    public void changeEventDefault(boolean val){
+        allowEventByDefault = val;
+        conf.set("events."+eventName+".allowEventByDefault", val);
+        NoBlockInteract.getInstance().saveConfig();
     }
 
 

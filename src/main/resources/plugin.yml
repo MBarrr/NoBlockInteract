@@ -9,9 +9,15 @@ commands:
   ChangeEventPermission:
     description: Add or remove a permission group from an event
     usage: §eUsage; /ChangeEventPermission <BlockBreakEvent/BlockPlaceEvent> <permission group> <true/false>
-  AddEvent:
-    description: Add an event
-    usage: §eUsage; /AddEvent <event>
-  RemoveEvent:
-    description: Remove an event
-    usage: §eUsage; /RemoveEvent <event>
+  ChangeEventDefault:
+    description: Change the global permission for an event. <true> will allow any group access to the event, <false> will only allow the permission groups you added. Note if there are no permission groups and this is set to false, nobody will be able to do the event.
+    usage: §eUsage; /ChangeEventDefault <BlockBreakEvent/BlockPlaceEvent> <true/false>
+  ChangePrefix:
+    description: Change the message prefix, prefix can be up to 3 words long. Prefix is set to [World] (in dark red) by default
+    usage: §eUsage; /ChangePrefix <Prefix>
+  ChangeNoPermMessage:
+    description: Changes the message sent to players when they do not have permission to break/place a block
+    usage: §eUsage; /ChangeNoPermMessage <Message>
+  ViewEventPermissions:
+    description: View what permission groups have access to an event
+    usage: §eUsage; /ViewEventPermission <BlockBreakEvent/BlockPlaceEvent>
