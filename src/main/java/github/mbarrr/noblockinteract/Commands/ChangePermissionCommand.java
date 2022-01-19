@@ -1,11 +1,10 @@
-package github.mbarrr.noblockinteract;
+package github.mbarrr.noblockinteract.Commands;
 
+import github.mbarrr.noblockinteract.NoBlockInteract;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class ChangePermissionCommand implements CommandExecutor {
 
@@ -19,46 +18,54 @@ public class ChangePermissionCommand implements CommandExecutor {
 
         if(!sender.isOp()){
             NoBlockInteract.getInstance().sendPlayerMessage(player,"You do not have permission to do this.");
+            return true;
+        }
+
+        if(args[0].equalsIgnoreCase("help")){
             return false;
         }
+
         if(args.length != 3) {
             NoBlockInteract.getInstance().sendPlayerMessage(player,"Please enter 3 arguments");
-            return false;
+            return true;
         }
-        if(!NoBlockInteract.getInstance().getConfig().contains("events."+args[0])) {
+
+        if(!NoBlockInteract.getInstance().eventExists(args[0])) {
             NoBlockInteract.getInstance().sendPlayerMessage(player,"Event not found: "+args[0]);
-            return false;
+            return true;
         }
 
         //Setting values
-        List<String> perms = NoBlockInteract.getInstance().getConfig().getStringList("events."+args[0]);
         String event = args[0];
         String permission = args[1];
         boolean value = Boolean.parseBoolean(args[2]);
-        boolean containsPerm = perms.contains(permission);
+        boolean containsPerm = NoBlockInteract.getInstance().eventContainsPermission(event, permission);
 
         //Permission is to be added
-        if(value && !containsPerm){
-            perms.add(permission);
+        if(value){
+            //Permission already exists within event
+            if(containsPerm){
+                NoBlockInteract.getInstance().sendPlayerMessage(player, "This event already has this permission.");
+                return true;
+            }
+            //Permission was not found and was added to event
+            NoBlockInteract.getInstance().addPermissionToEvent(event, permission);
             NoBlockInteract.getInstance().sendPlayerMessage(player,"Permission successfully added.");
         }
 
         //Permission is to be removed
         else{
+            //Permission could not be found
             if(!containsPerm) {
                 NoBlockInteract.getInstance().sendPlayerMessage(player,"Permission was not found.");
-                return false;
+                return true;
             }
 
-            else{
-                perms.remove(permission);
-                NoBlockInteract.getInstance().sendPlayerMessage(player,"Permission successfully removed.");
-            }
+            //Permission was found and removed
+            NoBlockInteract.getInstance().removePermissionFromEvent(event, permission);
+            NoBlockInteract.getInstance().sendPlayerMessage(player,"Permission successfully removed.");
         }
 
-        NoBlockInteract.getInstance().getConfig().set("events."+event, perms);
-        NoBlockInteract.getInstance().saveConfig();
-        NoBlockInteract.getInstance().loadPermissions();
         return true;
     }
 }
