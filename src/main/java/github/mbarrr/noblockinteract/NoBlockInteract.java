@@ -1,8 +1,8 @@
 package github.mbarrr.noblockinteract;
 
-import github.mbarrr.noblockinteract.Commands.AddEventCommand;
-import github.mbarrr.noblockinteract.Commands.ChangePermissionCommand;
-import github.mbarrr.noblockinteract.Commands.RemoveEventCommand;
+import github.mbarrr.noblockinteract.Commands.*;
+import github.mbarrr.noblockinteract.CustomListeners.BlockBreakListener;
+import github.mbarrr.noblockinteract.CustomListeners.BlockPlaceListener;
 import github.mbarrr.noblockinteract.CustomListeners.CustomListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,7 +15,6 @@ import java.util.List;
 
 public final class NoBlockInteract extends JavaPlugin implements Listener {
 
-
     private String prefix;
     private String noPermissionMessage;
     private List<CustomListener> listeners = new ArrayList<>();
@@ -26,9 +25,11 @@ public final class NoBlockInteract extends JavaPlugin implements Listener {
 
         getServer().getPluginManager().registerEvents(this, this);
 
-        //Check config for prefix and message otherwise replace with default values
-        checkConfig("prefix", "[CHANGEME]");
+        //Check config for stuff otherwise replace with default values
+        checkConfig("prefix", "[World]");
         checkConfig("noPermissionMessage", "You do not have permission to do this.");
+        checkConfig("events.BlockBreakEvent.allowEventByDefault", true);
+        checkConfig("events.BlockPlace.allowEventByDefault", true);
 
         if(!getConfig().contains("eventList")) {
             List<String> ev = new ArrayList<>();
@@ -37,21 +38,16 @@ public final class NoBlockInteract extends JavaPlugin implements Listener {
             getConfig().set("eventList", ev);
         }
 
-        if(!getConfig().contains("events.BlockBreakEvent.allowEventByDefault")){
-            getConfig().set("events.BlockBreakEvent.allowEventByDefault", true);
-        }
 
-        if(!getConfig().contains("events.BlockPlaceEvent.allowEventByDefault")){
-            getConfig().set("events.BlockPlaceEvent.allowEventByDefault", true);
-        }
 
         saveConfig();
-
         loadEvents();
 
-        this.getCommand("AddEvent").setExecutor(new AddEventCommand());
+        this.getCommand("ChangePrefix").setExecutor(new ChangePrefixCommand());
+        this.getCommand("ChangeNoPermMessage").setExecutor(new ChangeNoPermissionMessageCommand());
+        this.getCommand("ChangeEventDefault").setExecutor(new ChangeEventDefaultCommand());
         this.getCommand("ChangeEventPermission").setExecutor(new ChangePermissionCommand());
-        this.getCommand("RemoveEvent").setExecutor(new RemoveEventCommand());
+        this.getCommand("ViewEventPermissions").setExecutor(new ViewPermissionsCommand());
         prefix = getConfig().getString("prefix");
         noPermissionMessage = getConfig().getString("noPermissionMessage");
     }
@@ -62,14 +58,13 @@ public final class NoBlockInteract extends JavaPlugin implements Listener {
     }
 
     public void loadEvents(){
-        List<String> eventList = getConfig().getStringList("eventList");
-        for(String event: eventList){
-            CustomListener customListener = new CustomListener(event);
-            listeners.add(customListener);
-        }
+        BlockPlaceListener blockPlaceListener = new BlockPlaceListener("BlockPlaceEvent");
+        BlockBreakListener blockBreakListener = new BlockBreakListener("BlockBreakEvent");
+        listeners.add(blockBreakListener);
+        listeners.add(blockPlaceListener);
     }
 
-    private void checkConfig(String path, String defaultValue){
+    private void checkConfig(String path, Object defaultValue){
         if(!getConfig().contains(path)) getConfig().set(path, defaultValue);
     }
 
@@ -92,6 +87,29 @@ public final class NoBlockInteract extends JavaPlugin implements Listener {
         return false;
     }
 
+    public void changeEventDefault(String eventName, boolean val){
+        getListener(eventName).changeEventDefault(val);
+    }
+
+    public void changePrefix(String prefix){
+        this.prefix = prefix;
+        getConfig().set("prefix", prefix);
+        saveConfig();
+    }
+
+
+    public void changeNoPermsMessage(String noPermissionMessage){
+        this.noPermissionMessage = noPermissionMessage;
+        getConfig().set("noPermissionMessage", noPermissionMessage);
+        NoBlockInteract.getInstance().saveConfig();
+    }
+
+
+    public List<String> getEventPermissions(String eventName){
+        CustomListener listener = getListener(eventName);
+        return listener.getPermissions();
+    }
+
     public CustomListener getListener(String eventName){
         for(CustomListener listener: listeners){
             if(listener.getEventName().equals(eventName)) return listener;
@@ -103,18 +121,23 @@ public final class NoBlockInteract extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(listener, this);
     }
 
-
     public void sendPlayerMessage(Player player, String message){
-        player.sendMessage(ChatColor.DARK_RED+prefix+" "+ ChatColor.RED+message);
+        player.sendMessage(ChatColor.DARK_RED+prefix+" "+ ChatColor.YELLOW+message);
+    }
+
+    public boolean getDefault(String eventName){
+        CustomListener listener = getListener(eventName);
+        return listener.getDefault();
     }
 
     public void sendNoPermissionMessage(Player player){
-        sendPlayerMessage(player, noPermissionMessage);
+        sendPlayerMessage(player, ChatColor.RED+noPermissionMessage);
     }
 
     public static NoBlockInteract getInstance(){
         return (NoBlockInteract) Bukkit.getPluginManager().getPlugin("NoBlockInteract");
     }
+
 
 
 }

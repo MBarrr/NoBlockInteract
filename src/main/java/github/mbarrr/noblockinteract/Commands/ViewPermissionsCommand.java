@@ -1,15 +1,14 @@
 package github.mbarrr.noblockinteract.Commands;
 
-import github.mbarrr.noblockinteract.CustomListeners.CustomListener;
 import github.mbarrr.noblockinteract.NoBlockInteract;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ChangeEventDefaultCommand implements CommandExecutor {
+import java.util.List;
 
-
+public class ViewPermissionsCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
@@ -27,8 +26,8 @@ public class ChangeEventDefaultCommand implements CommandExecutor {
             return false;
         }
 
-        if(args.length != 2) {
-            NoBlockInteract.getInstance().sendPlayerMessage(player,"Please enter 2 arguments");
+        if(args.length != 1) {
+            NoBlockInteract.getInstance().sendPlayerMessage(player,"Please enter 1 argument");
             return true;
         }
 
@@ -37,8 +36,15 @@ public class ChangeEventDefaultCommand implements CommandExecutor {
             return true;
         }
 
-        NoBlockInteract.getInstance().changeEventDefault(args[0], Boolean.parseBoolean(args[1]));
-        NoBlockInteract.getInstance().sendPlayerMessage(player, "Event successfully updated");
+        List<String> permissions = NoBlockInteract.getInstance().getEventPermissions(args[0]);
+        boolean eventDefault = NoBlockInteract.getInstance().getDefault(args[0]);
+
+        NoBlockInteract.getInstance().sendPlayerMessage(player,"Event default for "+ args[0]+" is set to: " + eventDefault);
+        NoBlockInteract.getInstance().sendPlayerMessage(player,"and is accessible by the following groups:");
+
+        for(String perm: permissions){
+            NoBlockInteract.getInstance().sendPlayerMessage(player, perm);
+        }
 
         return true;
     }
